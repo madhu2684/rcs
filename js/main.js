@@ -20,34 +20,32 @@ function play(e) {
   showWinner(winner, computerChoice);
 }
 
-function getComputerChoice() {
-  const rand = Math.random();
-  if (rand < 0.34) {
-    return "rock";
-  } else if (rand <= 0.67) {
-    return "paper";
-  } else {
-    return "scissors";
-  }
+function getRandomItemInArray(list) {
+  return list[Math.floor((Math.random() * list.length))];
 }
 
-function getWinner(p, c) {
-  if (p === c) {
+function getComputerChoice() {
+  const computerChoices = ['rock', 'paper', 'scissors']
+  return getRandomItemInArray(computerChoices);
+}
+
+function getWinner(playerChoice, computerChoice) {
+  if (playerChoice === computerChoice) {
     return "draw";
-  } else if (p === "rock") {
+  } else if (playerChoice === "rock") {
     if (c === "paper") {
       return "computer";
     } else {
       return "player";
     }
-  } else if (p === "paper") {
-    if (c === "scissors") {
+  } else if (playerChoice === "paper") {
+    if (computerChoice === "scissors") {
       return "computer";
     } else {
       return "player";
     }
-  } else if (p === "scissors") {
-    if (c === "rock") {
+  } else if (playerChoice === "scissors") {
+    if (computerChoice === "rock") {
       return "computer";
     } else {
       return "player";
@@ -56,46 +54,65 @@ function getWinner(p, c) {
 }
 
 function showWinner(winner, computerChoice) {
-  if (winner === "player") {
-    scoreboard.player++;
-    result.innerHTML = `
-        <h1 class="text-win">You Win</h1>
-        <i class="fas fa-hand-${computerChoice} fa-10x"></i>
-        <p>Computer chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)
-      }</strong></p>
-        `;
-  } else if (winner === "computer") {
-    scoreboard.computer++;
-    result.innerHTML = `
-        <h1 class="text-lose">You Lose</h1>
-        <i class="fas fa-hand-${computerChoice} fa-10x"></i>
-        <p>Computer chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)
-      }</strong></p>
-        `;
-  } else {
-    result.innerHTML = `
-        <h1>It's a Draw</h1>
-        <i class="fas fa-hand-${computerChoice} fa-10x"></i>
-        <p>Computer chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)
-      }</strong></p>
-        `;
+
+  switch (winner) {
+    case ('player'):
+      message = "You Win"
+      colorClassName = "text-win"
+      scoreboard.player++;
+      break;
+    case ('computer'):
+      message = "You Lose"
+      colorClassName = "text-lose"
+      scoreboard.computer++;
+      break;
+    default:
+      message = "It's a Draw"
+      colorClassName = ""
+      scoreboard.player++;
+      break;
   }
-  score.innerHTML = `
-  <p>Player: ${scoreboard.player}</p>
-  <p>Computer: ${scoreboard.computer}</p>
+
+  result.innerHTML = `
+  <h1 class="${colorClassName}">${message}</h1>
+  <i class="fas fa-hand-${computerChoice} fa-10x"></i>
+  <p>Computer chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)
+    }</strong></p>
   `;
 
+  displayScores()
+
   modal.style.display = "block";
+
+}
+
+function setPlayerScore(score) {
+  scoreboard.player = score;
+}
+function setComputerScore(score) {
+  scoreboard.computer = score;
+}
+
+function displayScores() {
+  score.innerHTML = `
+  <p>Player: ${scoreboard.player}</p>
+  <p>Computer: ${scoreboard.computer}</p> 
+  `;
 }
 
 function restartGame(e) {
-  scoreboard.player = 0;
-  scoreboard.computer = 0;
-  score.innerHTML = `
-    <p>Player: 0</p>
-    <p>Computer: 0</p> 
-    `;
+  resetScores()
+  hideRestartButton()
+}
+
+function hideRestartButton() {
   restart.style.display = "none";
+}
+
+function resetScores() {
+  setPlayerScore(0)
+  setComputerScore(0)
+  displayScores()
 }
 
 function clearModal(e) {
